@@ -9,3 +9,10 @@ export const dogSchema = z.object({
 });
 
 export type Dog = z.infer<typeof dogSchema>;
+
+export enum SelectedState {
+  All = "all",
+  Favorited = "favorited",
+  Unfavorited = "unfavorited",
+  CreateDog = "create dog",
+}

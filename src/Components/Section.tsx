@@ -1,45 +1,57 @@
-import { ReactNode } from "react";
+import { ReactNode, useContext } from "react";
+import { Context } from "../context";
+import { Dog, SelectedState } from "../types";
+import { Button } from "./Button";
 
 export const Section = ({
   label,
   children,
 }: {
-  // No more props than these two allowed
   label: string;
   children: ReactNode;
 }) => {
+  const useAppContext = () => {
+    const context = useContext(Context);
+    if (context === undefined) {
+      throw new Error("useAppContext error");
+    }
+    return context;
+  };
+  const { dogsQuery } = useAppContext();
+  const { data, isLoading, isError, error } = dogsQuery;
+
+  const favorited: number =
+    (data as Dog[])?.filter((dog: Dog) => dog.isFavorite)
+      .length ?? 0;
+  const unfavorited: number =
+    (data as Dog[])?.filter((dog: Dog) => !dog.isFavorite)
+      .length ?? 0;
+
+  if (isLoading) return <div>Loading...</div>;
+  if (isError)
+    return <div>Error: {!!error ?? "Error"}</div>;
+
   return (
     <section id="main-section">
       <div className="container-header">
         <div className="container-label">{label}</div>
         <div className="selectors">
-          {/* This should display the favorited count */}
-          <div
-            className={`selector ${"active"}`}
-            onClick={() => {
-              alert("click favorited");
-            }}
-          >
-            favorited ( {0} )
-          </div>
-
-          {/* This should display the unfavorited count */}
-          <div
-            className={`selector ${""}`}
-            onClick={() => {
-              alert("click unfavorited");
-            }}
-          >
-            unfavorited ( {10} )
-          </div>
-          <div
-            className={`selector ${""}`}
-            onClick={() => {
-              alert("clicked create dog");
-            }}
-          >
-            create dog
-          </div>
+          <Button
+            type={SelectedState.All}
+            label={`all ( ${(data as Dog[]).length ?? 0} )`}
+          />
+          <Button
+            type={SelectedState.Favorited}
+            label={`favorited ( ${favorited} )`}
+          />
+          <Button
+            type={SelectedState.Unfavorited}
+            label={`unfavorited ( ${unfavorited} )`}
+          />
+          <Button
+            type={SelectedState.CreateDog}
+            label={"create dog"}
+          />
         </div>
       </div>
       <div className="content-container">{children}</div>
