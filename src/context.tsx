@@ -8,7 +8,7 @@ import { Dog, DogContextType } from "./types";
 import { Requests } from "./api";
 import { toast } from "react-hot-toast";
 
-export const DogContext2 = createContext<
+export const DogContext = createContext<
   DogContextType | undefined
 >(undefined);
 
@@ -59,9 +59,9 @@ export const DogProvider = ({
       .then(() => refetchDogs())
       .then(() => {
         if (dog.isFavorite === false) {
-          toast.success(`You've favorite a good boi`);
+          toast.success(`Added to Favorites`);
         } else {
-          toast.success(`You've unfavorited a good boi`);
+          toast.success(`Removed from Favorites`);
         }
       })
       .finally(() => setIsLoading(false))
@@ -98,7 +98,7 @@ export const DogProvider = ({
   })();
 
   return (
-    <DogContext2.Provider
+    <DogContext.Provider
       value={{
         mode,
         setMode,
@@ -113,11 +113,11 @@ export const DogProvider = ({
       }}
     >
       {children}
-    </DogContext2.Provider>
+    </DogContext.Provider>
   );
 };
 
 export const useDog = () => {
-  const context = useContext(DogContext2) || {};
+  const context = useContext(DogContext) || {};
   return context;
 };
